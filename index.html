@@ -81,14 +81,7 @@
 
  <h2>Besichtigung</h2>
  <label>Verbindliche Terminwahl (15-Min-Fenster) *</label>
- <select name="slot" required>
-   <option value="">…</option>
-   <!-- [DATUM] je Kampagne anpassen -->
-   <option>[Datum] 13:00–13:15</option><option>[Datum] 13:15–13:30</option>
-   <option>[Datum] 13:30–13:45</option><option>[Datum] 13:45–14:00</option>
-   <option>[Datum] 14:00–14:15</option><option>[Datum] 14:15–14:30</option>
-   <option>[Datum] 14:30–14:45</option><option>[Datum] 14:45–15:00</option>
- </select>
+ <select name="slot" id="slot" required><option value="">…</option></select>
 
  <label class="chk"><input type="checkbox" name="wahrheitsgemaess" required> Ich versichere die Angaben <b>wahrheitsgemäß</b> gemacht zu haben. *</label>
  <label class="chk"><input type="checkbox" name="consent" required> Ich willige in die Verarbeitung meiner Angaben zur Bearbeitung meiner Bewerbung ein; abgelehnte Daten werden nach Abschluss gelöscht. *</label>
@@ -102,6 +95,23 @@
  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFka2Z6emZubnRmeXZ1dHp0Y2tsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE4NjgyOTYsImV4cCI6MjA5NzQ0NDI5Nn0.iXEsIiltmZjwrwk9YPNlgbadwxFrqBvkhDu55rrTCH8";
  const $=id=>document.getElementById(id);
  $('unit_id').value = new URLSearchParams(location.search).get('unit') || '';
+
+ // ╔══ HIER vor jeder Kampagne anpassen: Besichtigungstermine ══╗
+ const BESICHTIGUNGEN = [
+   { datum:'[Datum eintragen]', von:'13:00', bis:'15:00', takt:15 }
+   // weitere Tage möglich, z. B.:  , { datum:'So 13.07.', von:'11:00', bis:'12:30', takt:15 }
+ ];
+ // ╚════════════════════════════════════════════════════════════╝
+ (function(){ const sel=$('slot'), pad=n=>String(n).padStart(2,'0');
+   BESICHTIGUNGEN.forEach(b=>{
+     let [h,m]=b.von.split(':').map(Number);
+     const [eh,em]=b.bis.split(':').map(Number), end=eh*60+em;
+     while(h*60+m < end){ let m2=m+b.takt, h2=h+Math.floor(m2/60); m2%=60;
+       const o=document.createElement('option');
+       o.textContent=`${b.datum} ${pad(h)}:${pad(m)}–${pad(h2)}:${pad(m2)}`;
+       sel.appendChild(o); h=h2; m=m2; }
+   });
+ })();
  function uid(){ return (self.crypto&&crypto.randomUUID)?crypto.randomUUID():(Date.now()+'-'+Math.floor(Math.random()*1e9)); }
  // Live-Hinweise
  function checkKinder(){ const p=parseInt($('personen').value||'0',10), k=$('kinder').value!==''?parseInt($('kinder').value,10):null;
@@ -138,6 +148,7 @@
    const a1=[f.strasse.value,f.hausnr.value].map(x=>x.trim()).filter(Boolean).join(' ');
    const a2=[f.plz.value,f.ort.value].map(x=>x.trim()).filter(Boolean).join(' ');
    const adr=[a1,a2].filter(Boolean).join(', '); if(adr) o.aktuelle_adresse=adr;
+   if(!o.haustiere) o.haustiere='keine';   // Default wenn leer
    // Erklärungs-Checkboxen: angehakt = "kein…" = false
    ['raeumungstitel','insolvenz','mietschulden'].forEach(k=>{ o[k]=!f.elements[k].checked; });
    try{
