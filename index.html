@@ -2,66 +2,121 @@
 <html lang="de">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Wohnungsbewerbung – Körnerstraße 35</title>
+<title>Wohnungsbewerbung & Selbstauskunft – Körnerstraße 35</title>
 <style>
- body{font-family:system-ui,sans-serif;max-width:640px;margin:2rem auto;padding:0 1rem;color:#222}
- h1{font-size:1.4rem} label{display:block;margin:.8rem 0 .2rem;font-weight:600}
+ body{font-family:system-ui,sans-serif;max-width:680px;margin:2rem auto;padding:0 1rem;color:#222}
+ h1{font-size:1.35rem} h2{font-size:1rem;margin:1.6rem 0 .3rem;border-bottom:1px solid #ddd;padding-bottom:.2rem}
+ label{display:block;margin:.7rem 0 .2rem;font-weight:600}
  input,select,textarea{width:100%;padding:.5rem;border:1px solid #bbb;border-radius:6px;font-size:1rem}
- .row{display:flex;gap:.6rem} .row>div{flex:1}
- button{margin-top:1.2rem;padding:.7rem 1.2rem;border:0;border-radius:8px;background:#2a6;color:#fff;font-size:1rem;cursor:pointer}
- small{color:#666} .ok{color:#2a6;font-weight:600} .err{color:#c33}
+ .row{display:flex;gap:.6rem;flex-wrap:wrap}.row>div{flex:1;min-width:160px}
+ .chk{font-weight:400;display:flex;gap:.5rem;align-items:flex-start;margin:.5rem 0}
+ .chk input{width:auto;margin-top:.25rem}
+ button{margin-top:1.4rem;padding:.7rem 1.3rem;border:0;border-radius:8px;background:#2a6;color:#fff;font-size:1rem;cursor:pointer}
+ small{color:#666}.ok{color:#2a6;font-weight:600}.err{color:#c33}
 </style>
 </head>
 <body>
-<h1>Wohnungsbewerbung – Körnerstraße 35, Bremerhaven</h1>
-<p><small>Mit diesem Formular melden Sie sich zur Sammelbesichtigung an und übermitteln Ihre Selbstauskunft. Pflichtfelder *.</small></p>
+<h1>Wohnungsbewerbung & Mieterselbstauskunft – Körnerstraße 35, Bremerhaven</h1>
+<p><small>Diese Angaben ersetzen die Papier-Mieterselbstauskunft. Sie melden sich zugleich zur Sammelbesichtigung an. Pflichtfelder *.</small></p>
 <form id="f">
+ <h2>Kontakt</h2>
  <label>Ihr Name *</label><input name="name" required>
  <div class="row">
   <div><label>E-Mail *</label><input type="email" name="email" required></div>
   <div><label>Telefon / WhatsApp *</label><input name="phone" required></div>
  </div>
- <label>Anzahl Personen im Haushalt *</label>
- <select name="personen" required><option value="">…</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+ <div class="row">
+  <div><label>Geburtsdatum</label><input type="date" name="geburtsdatum"></div>
+  <div><label>Aktuelle Adresse</label><input name="aktuelle_adresse"></div>
+ </div>
+
+ <h2>Haushalt</h2>
+ <div class="row">
+  <div><label>Personen gesamt *</label><select name="personen" required><option value="">…</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+  <div><label>davon Kinder</label><input type="number" name="anzahl_kinder" min="0"></div>
+ </div>
+ <label>Mitbewohner (Namen, falls weitere)</label><input name="mitbewohner">
+ <div class="row">
+  <div><label>Haustiere?</label><input name="haustiere" placeholder="nein / Katze / …"></div>
+  <div><label>Raucher?</label><select name="raucher"><option value="">…</option><option value="false">nein</option><option value="true">ja</option></select></div>
+ </div>
+
+ <h2>Beschäftigung & Einkommen</h2>
  <label>Einkommensart *</label>
  <select name="einkommensart" required><option value="">…</option><option>Angestellt</option><option>Selbstständig</option><option>Rente</option><option>Jobcenter</option><option>Sonstiges</option></select>
- <label>Monatliches Nettoeinkommen (Haushalt)</label>
- <select name="einkommen_spanne"><option value="">…</option><option>&lt; 1.500 €</option><option>1.500–2.500 €</option><option>2.500–3.500 €</option><option>&gt; 3.500 €</option></select>
  <div class="row">
-  <div><label>Gewünschter Einzug ab</label><input type="date" name="einzug_ab"></div>
-  <div><label>Haustiere?</label><input name="haustiere" placeholder="nein / Katze / …"></div>
+  <div><label>Arbeitgeber</label><input name="arbeitgeber"></div>
+  <div><label>beschäftigt seit</label><input name="beschaeftigt_seit" placeholder="MM/JJJJ"></div>
+  <div><label>befristet?</label><select name="befristet"><option value="">…</option><option value="false">nein</option><option value="true">ja</option></select></div>
  </div>
- <label>Besichtigungstermin *</label>
+ <label>Monatliches Nettoeinkommen Haushalt (€)</label><input type="number" name="netto_einkommen_eur" min="0" step="50">
+
+ <h2>Bisheriges Mietverhältnis</h2>
+ <div class="row">
+  <div><label>Vormieter/Vermieter (Name)</label><input name="vormieter_name"></div>
+  <div><label>Kontakt Vormieter</label><input name="vormieter_kontakt"></div>
+ </div>
+ <label>Grund des Umzugs</label><input name="umzugsgrund">
+
+ <h2>Erklärungen</h2>
+ <label class="chk"><input type="checkbox" name="raeumungstitel"> Es besteht/bestand <b>kein</b> Räumungstitel gegen mich.</label>
+ <label class="chk"><input type="checkbox" name="insolvenz"> Es liegt <b>kein</b> laufendes Insolvenzverfahren vor.</label>
+ <label class="chk"><input type="checkbox" name="mietschulden"> Ich habe <b>keine</b> offenen Mietschulden.</label>
+
+ <h2>Nachweise (optional)</h2>
+ <label>SCHUFA / Vorvermieterbescheinigung / Einkommensnachweis hochladen</label>
+ <input type="file" name="nachweise" id="nachweise" multiple accept=".pdf,.jpg,.jpeg,.png">
+ <small>PDF oder Foto, mehrere möglich.</small>
+
+ <h2>Besichtigung</h2>
+ <label>Verbindliche Terminwahl *</label>
  <select name="slot" required><option value="">…</option><option>Sa. – 11:00 Uhr (Sammeltermin)</option><option>So. – 13:00 Uhr (Sammeltermin)</option></select>
- <label><input type="checkbox" name="consent" required style="width:auto"> Ich willige ein, dass meine Angaben zur Bearbeitung meiner Wohnungsbewerbung verarbeitet und nach Abschluss gelöscht werden. *</label>
+
+ <label class="chk"><input type="checkbox" name="wahrheitsgemaess" required> Ich versichere die Angaben <b>wahrheitsgemäß</b> gemacht zu haben. *</label>
+ <label class="chk"><input type="checkbox" name="consent" required> Ich willige in die Verarbeitung meiner Angaben zur Bearbeitung meiner Bewerbung ein; abgelehnte Daten werden nach Abschluss gelöscht. *</label>
+
  <input type="hidden" name="unit_id" id="unit_id">
- <button type="submit">Bewerbung absenden</button>
+ <button type="submit">Bewerbung & Selbstauskunft absenden</button>
  <p id="msg"></p>
 </form>
 <script>
- // ====== KONFIG: hier deine Supabase-Werte eintragen (anon key ist öffentlich, RLS schützt) ======
  const SUPABASE_URL = "https://qdkfzzfnntfyvutztckl.supabase.co";
  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFka2Z6emZubnRmeXZ1dHp0Y2tsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE4NjgyOTYsImV4cCI6MjA5NzQ0NDI5Nn0.iXEsIiltmZjwrwk9YPNlgbadwxFrqBvkhDu55rrTCH8";
- // unit_id aus URL ?unit=BHV-KS35-04
+ const BOOLS = ['raucher','befristet','raeumungstitel','insolvenz','mietschulden'];
  document.getElementById('unit_id').value = new URLSearchParams(location.search).get('unit') || '';
+ function uid(){ return (self.crypto&&crypto.randomUUID)?crypto.randomUUID():(Date.now()+'-'+Math.floor(Math.random()*1e9)); }
  document.getElementById('f').addEventListener('submit', async (e)=>{
    e.preventDefault();
-   const fd = new FormData(e.target), o = {};
+   const msg=document.getElementById('msg'); msg.textContent='Wird gesendet…'; msg.className='';
+   const fd=new FormData(e.target), o={};
    fd.forEach((v,k)=>{
-     if (k==='consent'){ o.consent = true; return; }
-     if (v === '' || v == null) return;            // leere Felder weglassen -> NULL
-     if (k==='personen'){ o.personen = parseInt(v,10); return; }
-     if (k==='raucher'){ o.raucher = (v==='on'); return; }
-     o[k] = v;
+     if(k==='nachweise') return;
+     if(k==='consent'){o.consent=true;return;}
+     if(k==='wahrheitsgemaess'){o.wahrheitsgemaess=true;return;}
+     if(k==='raeumungstitel'||k==='insolvenz'||k==='mietschulden'){ return; } // Checkbox-Erklärung: Haken = "kein…" = false
+     if(v===''||v==null) return;
+     if(k==='personen'||k==='anzahl_kinder'){o[k]=parseInt(v,10);return;}
+     if(k==='netto_einkommen_eur'){o[k]=parseFloat(v);return;}
+     if(k==='befristet'||k==='raucher'){o[k]=(v==='true');return;}
+     o[k]=v;
    });
-   const msg = document.getElementById('msg');
+   // Erklärungs-Checkboxen: angehakt => "kein Räumungstitel/Insolvenz/Mietschulden" => Feldwert false; nicht angehakt => true (=Problem)
+   ['raeumungstitel','insolvenz','mietschulden'].forEach(k=>{ o[k] = !e.target.elements[k].checked; });
    try{
-     const r = await fetch(`${SUPABASE_URL}/rest/v1/applicants`, {
+     const files=document.getElementById('nachweise').files;
+     if(files.length){
+       const ref=uid(); o.nachweis_ref=ref;
+       for(const file of files){
+         await fetch(`${SUPABASE_URL}/storage/v1/object/nachweise/${ref}/${encodeURIComponent(file.name)}`,
+           {method:'POST',headers:{apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY},body:file});
+       }
+     }
+     const r=await fetch(`${SUPABASE_URL}/rest/v1/applicants`,{
        method:'POST',
-       headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY,'Authorization':`Bearer ${SUPABASE_ANON_KEY}`,'Prefer':'return=minimal'},
-       body: JSON.stringify(o)
+       headers:{'Content-Type':'application/json',apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY,Prefer:'return=minimal'},
+       body:JSON.stringify(o)
      });
-     if(r.ok){ e.target.reset(); msg.className='ok'; msg.textContent='Vielen Dank! Ihre Bewerbung ist eingegangen.'; }
+     if(r.ok){ e.target.reset(); msg.className='ok'; msg.textContent='Vielen Dank! Ihre Bewerbung und Selbstauskunft sind eingegangen.'; }
      else { msg.className='err'; msg.textContent='Fehler beim Senden ('+r.status+'). Bitte später erneut versuchen.'; }
    }catch(err){ msg.className='err'; msg.textContent='Netzwerkfehler. Bitte später erneut versuchen.'; }
  });
