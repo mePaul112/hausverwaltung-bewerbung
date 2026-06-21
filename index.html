@@ -96,21 +96,23 @@
  const $=id=>document.getElementById(id);
  $('unit_id').value = new URLSearchParams(location.search).get('unit') || '';
 
- // ╔══ HIER vor jeder Kampagne anpassen: Besichtigungstermine ══╗
- const BESICHTIGUNGEN = [
-   { datum:'[Datum eintragen]', von:'13:00', bis:'15:00', takt:15 }
-   // weitere Tage möglich, z. B.:  , { datum:'So 13.07.', von:'11:00', bis:'12:30', takt:15 }
- ];
- // ╚════════════════════════════════════════════════════════════╝
- (function(){ const sel=$('slot'), pad=n=>String(n).padStart(2,'0');
-   BESICHTIGUNGEN.forEach(b=>{
-     let [h,m]=b.von.split(':').map(Number);
-     const [eh,em]=b.bis.split(':').map(Number), end=eh*60+em;
-     while(h*60+m < end){ let m2=m+b.takt, h2=h+Math.floor(m2/60); m2%=60;
-       const o=document.createElement('option');
-       o.textContent=`${b.datum} ${pad(h)}:${pad(m)}–${pad(h2)}:${pad(m2)}`;
-       sel.appendChild(o); h=h2; m=m2; }
-   });
+ // Besichtigungstermine werden aus Supabase (Tabelle viewing_slots) geladen —
+ // Pflege bequem im Table Editor, kein Code-Eingriff nötig.
+ (async function loadSlots(){
+   const sel=$('slot'), pad=n=>String(n).padStart(2,'0'), unit=$('unit_id').value;
+   try{
+     const flt = unit ? `&or=(unit_id.eq.${encodeURIComponent(unit)},unit_id.is.null)` : '';
+     const r = await fetch(`${SUPABASE_URL}/rest/v1/viewing_slots?aktiv=eq.true${flt}&order=datum,von`,
+       {headers:{apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY}});
+     const rows = r.ok ? await r.json() : [];
+     rows.forEach(b=>{ let [h,m]=(b.von||'13:00').split(':').map(Number);
+       const [eh,em]=(b.bis||'15:00').split(':').map(Number), end=eh*60+em, takt=b.takt||15;
+       while(h*60+m < end){ let m2=m+takt,h2=h+Math.floor(m2/60); m2%=60;
+         const o=document.createElement('option');
+         o.textContent=`${b.datum||''} ${pad(h)}:${pad(m)}–${pad(h2)}:${pad(m2)}`.trim();
+         sel.appendChild(o); h=h2; m=m2; } });
+   }catch(e){}
+   if(sel.options.length<=1){ const o=document.createElement('option'); o.value=''; o.textContent='Termine werden noch bekanntgegeben'; sel.appendChild(o); }
  })();
  function uid(){ return (self.crypto&&crypto.randomUUID)?crypto.randomUUID():(Date.now()+'-'+Math.floor(Math.random()*1e9)); }
  // Live-Hinweise
