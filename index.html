@@ -14,80 +14,87 @@
  .chk input{width:auto;margin-top:.25rem}
  button{margin-top:1.4rem;padding:.7rem 1.3rem;border:0;border-radius:8px;background:#2a6;color:#fff;font-size:1rem;cursor:pointer}
  small{color:#666}.hint{color:#c60;font-size:.85rem}.ok{color:#2a6;font-weight:600}.err{color:#c33;font-weight:600}
+ .lang{display:flex;gap:.3rem;justify-content:flex-end;margin:.5rem 0 -.4rem}
+ .lang button{margin:0;padding:.2rem .55rem;background:#eee;color:#444;font-size:.8rem;border-radius:6px}
+ .lang button.active{background:#2a6;color:#fff}
 </style>
 </head>
 <body>
 <img class="banner" src="./aussen.jpg" alt="Körnerstraße 35, Bremerhaven" onerror="this.style.display='none'">
-<h1>Wohnungsbewerbung & Mieterselbstauskunft – Körnerstraße 35, Bremerhaven</h1>
-<p><small>Diese Angaben ersetzen die Papier-Mieterselbstauskunft. Sie melden sich zugleich zur Besichtigung an. Pflichtfelder *.</small></p>
+<div class="lang">
+ <button type="button" data-l="de">DE</button>
+ <button type="button" data-l="en">EN</button>
+</div>
+<h1 data-i18n="h1">Wohnungsbewerbung & Mieterselbstauskunft – Körnerstraße 35, Bremerhaven</h1>
+<p><small data-i18n="intro">Diese Angaben ersetzen die Papier-Mieterselbstauskunft. Sie melden sich zugleich zur Besichtigung an. Pflichtfelder *.</small></p>
 <form id="f" novalidate>
- <h2>Kontakt</h2>
- <label>Ihr Name *</label><input name="name" required>
+ <h2 data-i18n="s_contact">Kontakt</h2>
+ <label data-i18n="l_name">Ihr Name *</label><input name="name" required>
  <div class="row">
-  <div><label>E-Mail *</label><input type="email" name="email" required></div>
-  <div><label>Telefon / WhatsApp *</label><input name="phone" id="phone" required placeholder="z. B. 0151 23456789" inputmode="tel"></div>
+  <div><label data-i18n="l_email">E-Mail *</label><input type="email" name="email" required></div>
+  <div><label data-i18n="l_phone">Telefon / WhatsApp *</label><input name="phone" id="phone" required data-i18n-ph="ph_phone" placeholder="z. B. 0151 23456789" inputmode="tel"></div>
  </div>
- <label>Geburtsdatum</label><input type="date" name="geburtsdatum">
- <label>Aktuelle Adresse</label>
+ <label data-i18n="l_birth">Geburtsdatum</label><input type="date" name="geburtsdatum">
+ <label data-i18n="l_address">Aktuelle Adresse</label>
  <div class="row">
-  <div style="flex:3"><input name="strasse" placeholder="Straße"></div>
-  <div style="flex:1"><input name="hausnr" placeholder="Nr."></div>
+  <div style="flex:3"><input name="strasse" data-i18n-ph="ph_street" placeholder="Straße"></div>
+  <div style="flex:1"><input name="hausnr" data-i18n-ph="ph_no" placeholder="Nr."></div>
  </div>
  <div class="row">
-  <div style="flex:1"><input name="plz" placeholder="PLZ" inputmode="numeric" pattern="\d{5}" maxlength="5"></div>
-  <div style="flex:3"><input name="ort" placeholder="Ort"></div>
+  <div style="flex:1"><input name="plz" data-i18n-ph="ph_zip" placeholder="PLZ" inputmode="numeric" pattern="\d{5}" maxlength="5"></div>
+  <div style="flex:3"><input name="ort" data-i18n-ph="ph_city" placeholder="Ort"></div>
  </div>
 
- <h2>Haushalt</h2>
+ <h2 data-i18n="s_household">Haushalt</h2>
  <div class="row">
-  <div><label>Personen gesamt *</label><select name="personen" id="personen" required><option value="">…</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
-  <div><label>davon Kinder</label><input type="number" name="anzahl_kinder" id="kinder" min="0"></div>
+  <div><label data-i18n="l_persons">Personen gesamt *</label><select name="personen" id="personen" required><option value="">…</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+  <div><label data-i18n="l_children">davon Kinder</label><input type="number" name="anzahl_kinder" id="kinder" min="0"></div>
  </div>
  <div id="kinderHint" class="hint"></div>
- <label>Mitbewohner (Namen, falls weitere)</label><input name="mitbewohner">
+ <label data-i18n="l_occupants">Mitbewohner (Namen, falls weitere)</label><input name="mitbewohner">
  <div class="row">
-  <div><label>Haustiere?</label><input name="haustiere" placeholder="nein / Katze / …"></div>
-  <div><label>Raucher?</label><select name="raucher"><option value="">…</option><option value="false">nein</option><option value="true">ja</option></select></div>
+  <div><label data-i18n="l_pets">Haustiere?</label><input name="haustiere" data-i18n-ph="ph_pets" placeholder="nein / Katze / …"></div>
+  <div><label data-i18n="l_smoker">Raucher?</label><select name="raucher"><option value="">…</option><option value="false" data-i18n="o_no">nein</option><option value="true" data-i18n="o_yes">ja</option></select></div>
  </div>
 
- <h2>Beschäftigung & Einkommen</h2>
- <label>Einkommensart *</label>
- <select name="einkommensart" required><option value="">…</option><option>Angestellt</option><option>Selbstständig</option><option>Rente</option><option>Jobcenter</option><option>Sonstiges</option></select>
+ <h2 data-i18n="s_income">Beschäftigung & Einkommen</h2>
+ <label data-i18n="l_incometype">Einkommensart *</label>
+ <select name="einkommensart" required><option value="">…</option><option value="Angestellt" data-i18n="o_employed">Angestellt</option><option value="Selbstständig" data-i18n="o_selfemployed">Selbstständig</option><option value="Rente" data-i18n="o_pension">Rente</option><option value="Jobcenter" data-i18n="o_jobcenter">Jobcenter</option><option value="Sonstiges" data-i18n="o_other">Sonstiges</option></select>
  <div class="row">
-  <div><label>Arbeitgeber</label><input name="arbeitgeber"></div>
-  <div><label>beschäftigt seit</label><input name="beschaeftigt_seit" placeholder="MM/JJJJ"></div>
-  <div><label>befristet?</label><select name="befristet"><option value="">…</option><option value="false">nein</option><option value="true">ja</option></select></div>
+  <div><label data-i18n="l_employer">Arbeitgeber</label><input name="arbeitgeber"></div>
+  <div><label data-i18n="l_since">beschäftigt seit</label><input name="beschaeftigt_seit" data-i18n-ph="ph_mmyyyy" placeholder="MM/JJJJ"></div>
+  <div><label data-i18n="l_fixedterm">befristet?</label><select name="befristet"><option value="">…</option><option value="false" data-i18n="o_no">nein</option><option value="true" data-i18n="o_yes">ja</option></select></div>
  </div>
- <label>Monatliches Nettoeinkommen Haushalt (€)</label>
- <input type="number" name="netto_einkommen_eur" id="netto" min="0" max="9999" step="50" placeholder="z. B. 2500">
+ <label data-i18n="l_netincome">Monatliches Nettoeinkommen Haushalt (€)</label>
+ <input type="number" name="netto_einkommen_eur" id="netto" min="0" max="9999" step="50" data-i18n-ph="ph_netincome" placeholder="z. B. 2500">
  <div id="nettoHint" class="hint"></div>
 
- <h2>Bisheriges Mietverhältnis</h2>
+ <h2 data-i18n="s_prevtenancy">Bisheriges Mietverhältnis</h2>
  <div class="row">
-  <div><label>Aktueller/letzter Vermieter (Name)</label><input name="vormieter_name"></div>
-  <div><label>Kontakt Vermieter</label><input name="vormieter_kontakt"></div>
+  <div><label data-i18n="l_prevlandlord">Aktueller/letzter Vermieter (Name)</label><input name="vormieter_name"></div>
+  <div><label data-i18n="l_landlordcontact">Kontakt Vermieter</label><input name="vormieter_kontakt"></div>
  </div>
- <label>Grund des Umzugs</label><input name="umzugsgrund">
+ <label data-i18n="l_movereason">Grund des Umzugs</label><input name="umzugsgrund">
 
- <h2>Erklärungen</h2>
- <label class="chk"><input type="checkbox" name="raeumungstitel"> Es besteht/bestand <b>kein</b> Räumungstitel gegen mich.</label>
- <label class="chk"><input type="checkbox" name="insolvenz"> Es liegt <b>kein</b> laufendes Insolvenzverfahren vor.</label>
- <label class="chk"><input type="checkbox" name="mietschulden"> Ich habe <b>keine</b> offenen Mietschulden.</label>
+ <h2 data-i18n="s_declarations">Erklärungen</h2>
+ <label class="chk"><input type="checkbox" name="raeumungstitel"> <span data-i18n-html="decl_eviction">Es besteht/bestand <b>kein</b> Räumungstitel gegen mich.</span></label>
+ <label class="chk"><input type="checkbox" name="insolvenz"> <span data-i18n-html="decl_insolvency">Es liegt <b>kein</b> laufendes Insolvenzverfahren vor.</span></label>
+ <label class="chk"><input type="checkbox" name="mietschulden"> <span data-i18n-html="decl_debt">Ich habe <b>keine</b> offenen Mietschulden.</span></label>
 
- <h2>Nachweise (optional)</h2>
- <label>SCHUFA / Vermieterbescheinigung / Einkommensnachweis hochladen</label>
+ <h2 data-i18n="s_documents">Nachweise (optional)</h2>
+ <label data-i18n="l_upload">SCHUFA / Vermieterbescheinigung / Einkommensnachweis hochladen</label>
  <input type="file" name="nachweise" id="nachweise" multiple accept=".pdf,.jpg,.jpeg,.png">
- <small>PDF oder Foto, mehrere möglich.</small>
+ <small data-i18n="hint_upload">PDF oder Foto, mehrere möglich.</small>
 
- <h2>Besichtigung</h2>
- <label>Verbindliche Terminwahl (15-Min-Fenster) *</label>
+ <h2 data-i18n="s_viewing">Besichtigung</h2>
+ <label data-i18n="l_slot">Verbindliche Terminwahl (15-Min-Fenster) *</label>
  <select name="slot" id="slot" required><option value="">…</option></select>
 
- <label class="chk"><input type="checkbox" name="wahrheitsgemaess" required> Ich versichere die Angaben <b>wahrheitsgemäß</b> gemacht zu haben. *</label>
- <label class="chk"><input type="checkbox" name="consent" required> Ich willige in die Verarbeitung meiner Angaben zur Bearbeitung meiner Bewerbung ein; abgelehnte Daten werden nach Abschluss gelöscht. *</label>
+ <label class="chk"><input type="checkbox" name="wahrheitsgemaess" required> <span data-i18n-html="decl_truthful">Ich versichere die Angaben <b>wahrheitsgemäß</b> gemacht zu haben. *</span></label>
+ <label class="chk"><input type="checkbox" name="consent" required> <span data-i18n-html="decl_consent">Ich willige in die Verarbeitung meiner Angaben zur Bearbeitung meiner Bewerbung ein; abgelehnte Daten werden nach Abschluss gelöscht. *</span></label>
 
  <input type="hidden" name="unit_id" id="unit_id">
- <button type="submit">Bewerbung & Selbstauskunft absenden</button>
+ <button type="submit" data-i18n="btn_submit">Bewerbung & Selbstauskunft absenden</button>
  <p id="msg"></p>
 </form>
 <script>
@@ -95,6 +102,76 @@
  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFka2Z6emZubnRmeXZ1dHp0Y2tsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE4NjgyOTYsImV4cCI6MjA5NzQ0NDI5Nn0.iXEsIiltmZjwrwk9YPNlgbadwxFrqBvkhDu55rrTCH8";
  const $=id=>document.getElementById(id);
  $('unit_id').value = new URLSearchParams(location.search).get('unit') || '';
+
+ /* ---------- i18n (DE/EN) ---------- */
+ const I18N={
+  title:{de:'Wohnungsbewerbung & Selbstauskunft – Körnerstraße 35',en:'Apartment application & self-disclosure – Körnerstraße 35'},
+  h1:{de:'Wohnungsbewerbung & Mieterselbstauskunft – Körnerstraße 35, Bremerhaven',en:'Apartment Application & Tenant Self-Disclosure – Körnerstraße 35, Bremerhaven'},
+  intro:{de:'Diese Angaben ersetzen die Papier-Mieterselbstauskunft. Sie melden sich zugleich zur Besichtigung an. Pflichtfelder *.',en:'This information replaces the paper tenant self-disclosure. You are also registering for a viewing appointment. Required fields *.'},
+  s_contact:{de:'Kontakt',en:'Contact'},
+  l_name:{de:'Ihr Name *',en:'Your name *'},
+  l_email:{de:'E-Mail *',en:'Email *'},
+  l_phone:{de:'Telefon / WhatsApp *',en:'Phone / WhatsApp *'},
+  ph_phone:{de:'z. B. 0151 23456789',en:'e.g. 0151 23456789'},
+  l_birth:{de:'Geburtsdatum',en:'Date of birth'},
+  l_address:{de:'Aktuelle Adresse',en:'Current address'},
+  ph_street:{de:'Straße',en:'Street'},ph_no:{de:'Nr.',en:'No.'},ph_zip:{de:'PLZ',en:'ZIP'},ph_city:{de:'Ort',en:'City'},
+  s_household:{de:'Haushalt',en:'Household'},
+  l_persons:{de:'Personen gesamt *',en:'Total persons *'},
+  l_children:{de:'davon Kinder',en:'of which children'},
+  l_occupants:{de:'Mitbewohner (Namen, falls weitere)',en:'Other occupants (names, if any)'},
+  l_pets:{de:'Haustiere?',en:'Pets?'},ph_pets:{de:'nein / Katze / …',en:'no / cat / …'},
+  l_smoker:{de:'Raucher?',en:'Smoker?'},
+  o_no:{de:'nein',en:'no'},o_yes:{de:'ja',en:'yes'},
+  s_income:{de:'Beschäftigung & Einkommen',en:'Employment & Income'},
+  l_incometype:{de:'Einkommensart *',en:'Type of income *'},
+  o_employed:{de:'Angestellt',en:'Employed'},o_selfemployed:{de:'Selbstständig',en:'Self-employed'},
+  o_pension:{de:'Rente',en:'Pension'},o_jobcenter:{de:'Jobcenter',en:'Jobcenter (benefits)'},o_other:{de:'Sonstiges',en:'Other'},
+  l_employer:{de:'Arbeitgeber',en:'Employer'},
+  l_since:{de:'beschäftigt seit',en:'employed since'},ph_mmyyyy:{de:'MM/JJJJ',en:'MM/YYYY'},
+  l_fixedterm:{de:'befristet?',en:'fixed-term?'},
+  l_netincome:{de:'Monatliches Nettoeinkommen Haushalt (€)',en:'Monthly net household income (€)'},
+  ph_netincome:{de:'z. B. 2500',en:'e.g. 2500'},
+  s_prevtenancy:{de:'Bisheriges Mietverhältnis',en:'Previous Tenancy'},
+  l_prevlandlord:{de:'Aktueller/letzter Vermieter (Name)',en:'Current/previous landlord (name)'},
+  l_landlordcontact:{de:'Kontakt Vermieter',en:'Landlord contact'},
+  l_movereason:{de:'Grund des Umzugs',en:'Reason for moving'},
+  s_declarations:{de:'Erklärungen',en:'Declarations'},
+  decl_eviction:{de:'Es besteht/bestand <b>kein</b> Räumungstitel gegen mich.',en:'There is/was <b>no</b> eviction order against me.'},
+  decl_insolvency:{de:'Es liegt <b>kein</b> laufendes Insolvenzverfahren vor.',en:'There are <b>no</b> ongoing insolvency proceedings.'},
+  decl_debt:{de:'Ich habe <b>keine</b> offenen Mietschulden.',en:'I have <b>no</b> outstanding rent debts.'},
+  s_documents:{de:'Nachweise (optional)',en:'Documents (optional)'},
+  l_upload:{de:'SCHUFA / Vermieterbescheinigung / Einkommensnachweis hochladen',en:'Upload SCHUFA / landlord reference / proof of income'},
+  hint_upload:{de:'PDF oder Foto, mehrere möglich.',en:'PDF or photo, multiple allowed.'},
+  s_viewing:{de:'Besichtigung',en:'Viewing'},
+  l_slot:{de:'Verbindliche Terminwahl (15-Min-Fenster) *',en:'Binding appointment selection (15-min slot) *'},
+  slots_tba:{de:'Termine werden noch bekanntgegeben',en:'Appointments to be announced'},
+  decl_truthful:{de:'Ich versichere die Angaben <b>wahrheitsgemäß</b> gemacht zu haben. *',en:'I confirm that the information provided is <b>truthful</b>. *'},
+  decl_consent:{de:'Ich willige in die Verarbeitung meiner Angaben zur Bearbeitung meiner Bewerbung ein; abgelehnte Daten werden nach Abschluss gelöscht. *',en:'I consent to the processing of my data to handle my application; rejected applicants’ data will be deleted after completion. *'},
+  btn_submit:{de:'Bewerbung & Selbstauskunft absenden',en:'Submit application & self-disclosure'},
+  // JS-Meldungen
+  warn_children:{de:'⚠ „davon Kinder" muss kleiner als „Personen gesamt" sein (mind. 1 Erwachsener).',en:'⚠ "of which children" must be less than "total persons" (at least 1 adult).'},
+  err_children:{de:'„davon Kinder" muss kleiner als „Personen gesamt" sein.',en:'"of which children" must be less than "total persons".'},
+  warn_netto:{de:'⚠ Über 5.000 € – bitte prüfen, ob korrekt.',en:'⚠ Over €5,000 – please check if correct.'},
+  confirm_netto:{de:'Nettoeinkommen über 5.000 € – bitte bestätigen, dass das korrekt ist.',en:'Net income over €5,000 – please confirm this is correct.'},
+  sending:{de:'Wird gesendet…',en:'Sending…'},
+  ok_sent:{de:'Vielen Dank! Ihre Bewerbung und Selbstauskunft sind eingegangen.',en:'Thank you! Your application and self-disclosure have been received.'},
+  err_send:{de:'Fehler beim Senden',en:'Error sending'},
+  err_network:{de:'Netzwerkfehler. Bitte später erneut versuchen.',en:'Network error. Please try again later.'}
+ };
+ let lang = new URLSearchParams(location.search).get('lang') || localStorage.getItem('lang') || (navigator.language||'de').slice(0,2).toLowerCase();
+ if(lang!=='de'&&lang!=='en') lang='en';   // nicht-deutsche Browser -> Englisch
+ const t=k=>((I18N[k]||{})[lang]) || ((I18N[k]||{}).de) || k;
+ function applyLang(l){
+   lang=l; try{localStorage.setItem('lang',l);}catch(e){} document.documentElement.lang=l;
+   document.title=t('title');
+   document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent=t(el.dataset.i18n); });
+   document.querySelectorAll('[data-i18n-html]').forEach(el=>{ el.innerHTML=t(el.dataset.i18nHtml); });
+   document.querySelectorAll('[data-i18n-ph]').forEach(el=>{ el.placeholder=t(el.dataset.i18nPh); });
+   document.querySelectorAll('.lang button').forEach(b=>b.classList.toggle('active', b.dataset.l===l));
+   checkKinder();
+ }
+ document.querySelectorAll('.lang button').forEach(b=>b.addEventListener('click',()=>applyLang(b.dataset.l)));
 
  // Besichtigungstermine werden aus Supabase (Tabelle viewing_slots) geladen —
  // Pflege bequem im Table Editor, kein Code-Eingriff nötig.
@@ -112,15 +189,15 @@
          o.textContent=`${b.datum||''} ${pad(h)}:${pad(m)}–${pad(h2)}:${pad(m2)}`.trim();
          sel.appendChild(o); h=h2; m=m2; } });
    }catch(e){}
-   if(sel.options.length<=1){ const o=document.createElement('option'); o.value=''; o.textContent='Termine werden noch bekanntgegeben'; sel.appendChild(o); }
+   if(sel.options.length<=1){ const o=document.createElement('option'); o.value=''; o.dataset.i18n='slots_tba'; o.textContent=t('slots_tba'); sel.appendChild(o); }
  })();
  function uid(){ return (self.crypto&&crypto.randomUUID)?crypto.randomUUID():(Date.now()+'-'+Math.floor(Math.random()*1e9)); }
  // Live-Hinweise
  function checkKinder(){ const p=parseInt($('personen').value||'0',10), k=$('kinder').value!==''?parseInt($('kinder').value,10):null;
-   $('kinderHint').textContent=(k!==null&&p&&k>=p)?'⚠ „davon Kinder" muss kleiner als „Personen gesamt" sein (mind. 1 Erwachsener).':''; }
+   $('kinderHint').textContent=(k!==null&&p&&k>=p)?t('warn_children'):''; }
  $('personen').addEventListener('change',checkKinder); $('kinder').addEventListener('input',checkKinder);
  $('netto').addEventListener('input',()=>{ const v=parseFloat($('netto').value||'0');
-   $('nettoHint').textContent=(v>5000)?'⚠ Über 5.000 € – bitte prüfen, ob korrekt.':''; });
+   $('nettoHint').textContent=(v>5000)?t('warn_netto'):''; });
  // Telefon-Normierung
  function normPhone(s){ let t=(s||'').replace(/[\s\/\-().]/g,''); t=t.replace(/^\+49/,'0').replace(/^0049/,'0'); return t; }
  $('phone').addEventListener('blur',()=>{ $('phone').value=normPhone($('phone').value); });
@@ -129,11 +206,11 @@
    e.preventDefault(); const f=e.target, msg=$('msg');
    if(!f.checkValidity()){ f.reportValidity(); return; }
    const pers=parseInt(f.personen.value||'0',10), kin=f.anzahl_kinder.value!==''?parseInt(f.anzahl_kinder.value,10):null;
-   if(kin!==null&&pers&&kin>=pers){ msg.className='err'; msg.textContent='„davon Kinder" muss kleiner als „Personen gesamt" sein.'; return; }
+   if(kin!==null&&pers&&kin>=pers){ msg.className='err'; msg.textContent=t('err_children'); return; }
    f.phone.value=normPhone(f.phone.value);
    const netto=f.netto_einkommen_eur.value!==''?parseFloat(f.netto_einkommen_eur.value):null;
-   if(netto!==null&&netto>5000&&!confirm('Nettoeinkommen über 5.000 € – bitte bestätigen, dass das korrekt ist.')) return;
-   msg.textContent='Wird gesendet…'; msg.className='';
+   if(netto!==null&&netto>5000&&!confirm(t('confirm_netto'))) return;
+   msg.textContent=t('sending'); msg.className='';
    const skip=new Set(['nachweise','strasse','hausnr','plz','ort','raeumungstitel','insolvenz','mietschulden']);
    const fd=new FormData(f), o={};
    fd.forEach((v,k)=>{
@@ -161,10 +238,12 @@
      const r=await fetch(`${SUPABASE_URL}/rest/v1/applicants`,{method:'POST',
        headers:{'Content-Type':'application/json',apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY,Prefer:'return=minimal'},
        body:JSON.stringify(o)});
-     if(r.ok){ f.reset(); $('kinderHint').textContent='';$('nettoHint').textContent=''; msg.className='ok'; msg.textContent='Vielen Dank! Ihre Bewerbung und Selbstauskunft sind eingegangen.'; }
-     else { msg.className='err'; msg.textContent='Fehler beim Senden ('+r.status+'). Bitte später erneut versuchen.'; }
-   }catch(err){ msg.className='err'; msg.textContent='Netzwerkfehler. Bitte später erneut versuchen.'; }
+     if(r.ok){ f.reset(); $('kinderHint').textContent='';$('nettoHint').textContent=''; msg.className='ok'; msg.textContent=t('ok_sent'); }
+     else { msg.className='err'; msg.textContent=t('err_send')+' ('+r.status+').'; }
+   }catch(err){ msg.className='err'; msg.textContent=t('err_network'); }
  });
+
+ applyLang(lang);   // initiale Sprache anwenden
 </script>
 </body>
 </html>
