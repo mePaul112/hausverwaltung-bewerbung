@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Wohnungsbewerbung & Selbstauskunft – Körnerstraße 35</title>
+<title>Wohnungsbewerbung & Selbstauskunft – Bremerhaven-Leh</title>
 <style>
  body{font-family:system-ui,sans-serif;max-width:680px;margin:0 auto 2rem;padding:0 1rem;color:#222}
  .banner{width:100%;height:180px;object-fit:cover;object-position:center 30%;border-radius:0 0 10px 10px;display:block;margin-bottom:1rem}
@@ -13,19 +13,19 @@
  .chk{font-weight:400;display:flex;gap:.5rem;align-items:flex-start;margin:.5rem 0}
  .chk input{width:auto;margin-top:.25rem}
  button{margin-top:1.4rem;padding:.7rem 1.3rem;border:0;border-radius:8px;background:#2a6;color:#fff;font-size:1rem;cursor:pointer}
- small{color:#666}.hint{color:#c60;font-size:.85rem}.ok{color:#2a6;font-weight:600}.err{color:#c33;font-weight:600}
+ small{color:#666}.hint{color:#c60;font-size:.85rem}.ok{color:#2a6;font-weight:600;white-space:pre-line}.err{color:#c33;font-weight:600}
  .lang{display:flex;gap:.3rem;justify-content:flex-end;margin:.5rem 0 -.4rem}
  .lang button{margin:0;padding:.2rem .55rem;background:#eee;color:#444;font-size:.8rem;border-radius:6px}
  .lang button.active{background:#2a6;color:#fff}
 </style>
 </head>
 <body>
-<img class="banner" src="./aussen.jpg" alt="Körnerstraße 35, Bremerhaven" onerror="this.style.display='none'">
+<img class="banner" src="./aussen.jpg" alt="Mehrfamilienhaus in Bremerhaven-Leh" onerror="this.style.display='none'">
 <div class="lang">
  <button type="button" data-l="de">DE</button>
  <button type="button" data-l="en">EN</button>
 </div>
-<h1 data-i18n="h1">Wohnungsbewerbung & Mieterselbstauskunft – Körnerstraße 35, Bremerhaven</h1>
+<h1 data-i18n="h1">Wohnungsbewerbung & Mieterselbstauskunft – 3-Zimmer-Wohnung in Bremerhaven-Leh</h1>
 <p><small data-i18n="intro">Diese Angaben ersetzen die Papier-Mieterselbstauskunft. Sie melden sich zugleich zur Besichtigung an. Pflichtfelder *.</small></p>
 <form id="f" novalidate>
  <h2 data-i18n="s_contact">Kontakt</h2>
@@ -105,8 +105,8 @@
 
  /* ---------- i18n (DE/EN) ---------- */
  const I18N={
-  title:{de:'Wohnungsbewerbung & Selbstauskunft – Körnerstraße 35',en:'Apartment application & self-disclosure – Körnerstraße 35'},
-  h1:{de:'Wohnungsbewerbung & Mieterselbstauskunft – Körnerstraße 35, Bremerhaven',en:'Apartment Application & Tenant Self-Disclosure – Körnerstraße 35, Bremerhaven'},
+  title:{de:'Wohnungsbewerbung & Selbstauskunft – Bremerhaven-Leh',en:'Apartment application & self-disclosure – Bremerhaven-Leh'},
+  h1:{de:'Wohnungsbewerbung & Mieterselbstauskunft – 3-Zimmer-Wohnung in Bremerhaven-Leh',en:'Apartment Application & Tenant Self-Disclosure – 3-room flat in Bremerhaven-Leh'},
   intro:{de:'Diese Angaben ersetzen die Papier-Mieterselbstauskunft. Sie melden sich zugleich zur Besichtigung an. Pflichtfelder *.',en:'This information replaces the paper tenant self-disclosure. You are also registering for a viewing appointment. Required fields *.'},
   s_contact:{de:'Kontakt',en:'Contact'},
   l_name:{de:'Ihr Name *',en:'Your name *'},
@@ -156,6 +156,10 @@
   confirm_netto:{de:'Nettoeinkommen über 5.000 € – bitte bestätigen, dass das korrekt ist.',en:'Net income over €5,000 – please confirm this is correct.'},
   sending:{de:'Wird gesendet…',en:'Sending…'},
   ok_sent:{de:'Vielen Dank! Ihre Bewerbung und Selbstauskunft sind eingegangen.',en:'Thank you! Your application and self-disclosure have been received.'},
+  // Adresse bewusst ERST hier — vor dem Absenden nirgends auf der Seite, sonst
+  // erscheinen Interessenten unangemeldet zur Sammelbesichtigung.
+  ok_slot:{de:'Ihr Besichtigungstermin: {slot}',en:'Your viewing appointment: {slot}'},
+  ok_addr:{de:'Adresse: Körnerstraße 35, 27576 Bremerhaven. Treffpunkt am Hauseingang – bitte klingeln.',en:'Address: Körnerstraße 35, 27576 Bremerhaven. Meeting point at the main entrance – please ring the bell.'},
   err_send:{de:'Fehler beim Senden',en:'Error sending'},
   err_network:{de:'Netzwerkfehler. Bitte später erneut versuchen.',en:'Network error. Please try again later.'}
  };
@@ -238,7 +242,12 @@
      const r=await fetch(`${SUPABASE_URL}/rest/v1/applicants`,{method:'POST',
        headers:{'Content-Type':'application/json',apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY,Prefer:'return=minimal'},
        body:JSON.stringify(o)});
-     if(r.ok){ f.reset(); $('kinderHint').textContent='';$('nettoHint').textContent=''; msg.className='ok'; msg.textContent=t('ok_sent'); }
+     if(r.ok){ f.reset(); $('kinderHint').textContent='';$('nettoHint').textContent=''; msg.className='ok';
+       // o.slot vor dem reset() eingesammelt — Termin + Adresse gibt es nur nach dem Absenden
+       const zeilen=[t('ok_sent')];
+       if(o.slot) zeilen.push(t('ok_slot').replace('{slot}', o.slot));
+       zeilen.push(t('ok_addr'));
+       msg.textContent=zeilen.join('\n'); }
      else { msg.className='err'; msg.textContent=t('err_send')+' ('+r.status+').'; }
    }catch(err){ msg.className='err'; msg.textContent=t('err_network'); }
  });
