@@ -82,9 +82,13 @@
  <label class="chk"><input type="checkbox" name="mietschulden"> <span data-i18n-html="decl_debt">Ich habe <b>keine</b> offenen Mietschulden.</span></label>
 
  <h2 data-i18n="s_documents">Nachweise (optional)</h2>
- <label data-i18n="l_upload">SCHUFA / Vermieterbescheinigung / Einkommensnachweis hochladen</label>
- <input type="file" name="nachweise" id="nachweise" multiple accept=".pdf,.jpg,.jpeg,.png">
- <small data-i18n="hint_upload">PDF oder Foto, mehrere möglich.</small>
+ <label data-i18n="l_upload_schufa">SCHUFA-Auskunft</label>
+ <input type="file" name="nachweis_schufa" id="nachweis_schufa" multiple accept=".pdf,.jpg,.jpeg,.png">
+ <label data-i18n="l_upload_vermieter">Vermieterbescheinigung / Mietschuldenfreiheit</label>
+ <input type="file" name="nachweis_vermieter" id="nachweis_vermieter" multiple accept=".pdf,.jpg,.jpeg,.png">
+ <label data-i18n="l_upload_einkommen">Einkommensnachweise (letzte 3 Monate)</label>
+ <input type="file" name="nachweis_einkommen" id="nachweis_einkommen" multiple accept=".pdf,.jpg,.jpeg,.png">
+ <small data-i18n="hint_upload">PDF oder Foto, je Feld mehrere möglich. Was Sie jetzt nicht zur Hand haben, bringen Sie bitte zum Termin mit.</small>
 
  <h2 data-i18n="s_viewing">Besichtigung</h2>
  <label data-i18n="l_slot">Verbindliche Terminwahl (15-Min-Fenster) *</label>
@@ -141,8 +145,10 @@
   decl_insolvency:{de:'Es liegt <b>kein</b> laufendes Insolvenzverfahren vor.',en:'There are <b>no</b> ongoing insolvency proceedings.'},
   decl_debt:{de:'Ich habe <b>keine</b> offenen Mietschulden.',en:'I have <b>no</b> outstanding rent debts.'},
   s_documents:{de:'Nachweise (optional)',en:'Documents (optional)'},
-  l_upload:{de:'SCHUFA / Vermieterbescheinigung / Einkommensnachweis hochladen',en:'Upload SCHUFA / landlord reference / proof of income'},
-  hint_upload:{de:'PDF oder Foto, mehrere möglich.',en:'PDF or photo, multiple allowed.'},
+  l_upload_schufa:{de:'SCHUFA-Auskunft',en:'SCHUFA credit report'},
+  l_upload_vermieter:{de:'Vermieterbescheinigung / Mietschuldenfreiheit',en:'Landlord reference / proof of no rent arrears'},
+  l_upload_einkommen:{de:'Einkommensnachweise (letzte 3 Monate)',en:'Proof of income (last 3 months)'},
+  hint_upload:{de:'PDF oder Foto, je Feld mehrere möglich. Was Sie jetzt nicht zur Hand haben, bringen Sie bitte zum Termin mit.',en:'PDF or photo, several per field. Whatever you do not have at hand now, please bring to the viewing.'},
   s_viewing:{de:'Besichtigung',en:'Viewing'},
   l_slot:{de:'Verbindliche Terminwahl (15-Min-Fenster) *',en:'Binding appointment selection (15-min slot) *'},
   slots_tba:{de:'Termine werden noch bekanntgegeben',en:'Appointments to be announced'},
@@ -215,7 +221,8 @@
    const netto=f.netto_einkommen_eur.value!==''?parseFloat(f.netto_einkommen_eur.value):null;
    if(netto!==null&&netto>5000&&!confirm(t('confirm_netto'))) return;
    msg.textContent=t('sending'); msg.className='';
-   const skip=new Set(['nachweise','strasse','hausnr','plz','ort','raeumungstitel','insolvenz','mietschulden']);
+   const skip=new Set(['nachweis_schufa','nachweis_vermieter','nachweis_einkommen',
+                       'strasse','hausnr','plz','ort','raeumungstitel','insolvenz','mietschulden']);
    const fd=new FormData(f), o={};
    fd.forEach((v,k)=>{
      if(skip.has(k)) return;
@@ -235,10 +242,15 @@
    // Erklärungs-Checkboxen: angehakt = "kein…" = false
    ['raeumungstitel','insolvenz','mietschulden'].forEach(k=>{ o[k]=!f.elements[k].checked; });
    try{
-     const files=$('nachweise').files;
-     if(files.length){ const ref=uid(); o.nachweis_ref=ref;
-       for(const file of files){ await fetch(`${SUPABASE_URL}/storage/v1/object/nachweise/${ref}/${encodeURIComponent(file.name)}`,
-         {method:'POST',headers:{apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY},body:file}); } }
+     // Je Nachweisart ein eigener Unterordner — damit steht schon beim Hochladen fest,
+     // was welches Dokument ist, und die Verwaltung sieht direkt, was noch fehlt.
+     const ARTEN=['schufa','vermieter','einkommen'];
+     const hat=ARTEN.filter(a=>$('nachweis_'+a).files.length);
+     if(hat.length){ const ref=uid(); o.nachweis_ref=ref;
+       for(const art of hat){
+         for(const file of $('nachweis_'+art).files){
+           await fetch(`${SUPABASE_URL}/storage/v1/object/nachweise/${ref}/${art}/${encodeURIComponent(file.name)}`,
+             {method:'POST',headers:{apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY},body:file}); } } }
      const r=await fetch(`${SUPABASE_URL}/rest/v1/applicants`,{method:'POST',
        headers:{'Content-Type':'application/json',apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY,Prefer:'return=minimal'},
        body:JSON.stringify(o)});
