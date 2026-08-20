@@ -77,9 +77,10 @@
  <label data-i18n="l_movereason">Grund des Umzugs</label><input name="umzugsgrund">
 
  <h2 data-i18n="s_declarations">Erklärungen</h2>
- <label class="chk"><input type="checkbox" name="raeumungstitel"> <span data-i18n-html="decl_eviction">Es besteht/bestand <b>kein</b> Räumungstitel gegen mich.</span></label>
- <label class="chk"><input type="checkbox" name="insolvenz"> <span data-i18n-html="decl_insolvency">Es liegt <b>kein</b> laufendes Insolvenzverfahren vor.</span></label>
- <label class="chk"><input type="checkbox" name="mietschulden"> <span data-i18n-html="decl_debt">Ich habe <b>keine</b> offenen Mietschulden.</span></label>
+ <small data-i18n="hint_declarations">Bitte lesen Sie jeden Satz. Stimmt der Satz für Sie? Dann klicken Sie das Kästchen an. Das ⓘ zeigt eine Erklärung in einfacher Sprache.</small>
+ <label class="chk" data-i18n-title="hint_eviction" style="cursor:help"><input type="checkbox" name="raeumungstitel"> <span data-i18n-html="decl_eviction">Es besteht/bestand <b>kein</b> Räumungstitel gegen mich.</span> <span aria-hidden="true" style="color:#2a6;font-weight:600">ⓘ</span></label>
+ <label class="chk" data-i18n-title="hint_insolvency" style="cursor:help"><input type="checkbox" name="insolvenz"> <span data-i18n-html="decl_insolvency">Es liegt <b>kein</b> laufendes Insolvenzverfahren vor.</span> <span aria-hidden="true" style="color:#2a6;font-weight:600">ⓘ</span></label>
+ <label class="chk" data-i18n-title="hint_debt" style="cursor:help"><input type="checkbox" name="mietschulden"> <span data-i18n-html="decl_debt">Ich habe <b>keine</b> offenen Mietschulden.</span> <span aria-hidden="true" style="color:#2a6;font-weight:600">ⓘ</span></label>
 
  <h2 data-i18n="s_documents">Nachweise (optional)</h2>
  <label data-i18n="l_upload_schufa">SCHUFA-Auskunft</label>
@@ -145,6 +146,10 @@
   l_landlordcontact:{de:'Kontakt Vermieter',en:'Landlord contact'},
   l_movereason:{de:'Grund des Umzugs',en:'Reason for moving'},
   s_declarations:{de:'Erklärungen',en:'Declarations'},
+  hint_declarations:{de:'Bitte lesen Sie jeden Satz. Stimmt der Satz für Sie? Dann klicken Sie das Kästchen an. Das ⓘ zeigt eine Erklärung in einfacher Sprache.',en:'Please read each sentence. Is it true for you? Then tick the box. The ⓘ shows an explanation in simple language.'},
+  hint_eviction:{de:'Erklärung in einfacher Sprache: Ein Räumungs-Titel ist ein Urteil vom Gericht. Das Urteil sagt: Sie müssen aus Ihrer Wohnung ausziehen. Hatten Sie noch nie so ein Urteil? Dann klicken Sie das Kästchen an.',en:'Simple language: An eviction order is a court decision. It says: you must move out of your home. Never had such a decision? Then tick the box.'},
+  hint_insolvency:{de:'Erklärung in einfacher Sprache: Insolvenz heißt: Sie können Ihre Schulden nicht bezahlen. Ein Gericht regelt das dann. Läuft bei Ihnen kein solches Verfahren? Dann klicken Sie das Kästchen an.',en:'Simple language: Insolvency means: you cannot pay your debts and a court handles it. No such case running for you? Then tick the box.'},
+  hint_debt:{de:'Erklärung in einfacher Sprache: Miet-Schulden heißt: Sie müssen einem Vermieter noch Miete bezahlen. Haben Sie keine Miet-Schulden? Dann klicken Sie das Kästchen an.',en:'Simple language: Rent debts means: you still owe rent to a landlord. No rent debts? Then tick the box.'},
   decl_eviction:{de:'Es besteht/bestand <b>kein</b> Räumungstitel gegen mich.',en:'There is/was <b>no</b> eviction order against me.'},
   decl_insolvency:{de:'Es liegt <b>kein</b> laufendes Insolvenzverfahren vor.',en:'There are <b>no</b> ongoing insolvency proceedings.'},
   decl_debt:{de:'Ich habe <b>keine</b> offenen Mietschulden.',en:'I have <b>no</b> outstanding rent debts.'},
@@ -186,6 +191,7 @@
    document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent=t(el.dataset.i18n); });
    document.querySelectorAll('[data-i18n-html]').forEach(el=>{ el.innerHTML=t(el.dataset.i18nHtml); });
    document.querySelectorAll('[data-i18n-ph]').forEach(el=>{ el.placeholder=t(el.dataset.i18nPh); });
+  document.querySelectorAll('[data-i18n-title]').forEach(el=>{ el.title=t(el.dataset.i18nTitle); });
    document.querySelectorAll('.lang button').forEach(b=>b.classList.toggle('active', b.dataset.l===l));
    checkKinder();
  }
