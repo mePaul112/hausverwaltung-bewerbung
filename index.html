@@ -152,6 +152,7 @@
   s_viewing:{de:'Besichtigung',en:'Viewing'},
   l_slot:{de:'Verbindliche Terminwahl (15-Min-Fenster) *',en:'Binding appointment selection (15-min slot) *'},
   slots_tba:{de:'Termine werden noch bekanntgegeben',en:'Appointments to be announced'},
+  slots_voll:{de:'Alle Zeitfenster sind belegt – bitte melden Sie sich kurz per E-Mail',en:'All time slots are taken – please contact us by e-mail'},
   decl_truthful:{de:'Ich versichere die Angaben <b>wahrheitsgemäß</b> gemacht zu haben. *',en:'I confirm that the information provided is <b>truthful</b>. *'},
   decl_consent:{de:'Ich willige in die Verarbeitung meiner Angaben zur Bearbeitung meiner Bewerbung ein; abgelehnte Daten werden nach Abschluss gelöscht. *',en:'I consent to the processing of my data to handle my application; rejected applicants’ data will be deleted after completion. *'},
   btn_submit:{de:'Bewerbung & Selbstauskunft absenden',en:'Submit application & self-disclosure'},
@@ -187,19 +188,37 @@
  // Pflege bequem im Table Editor, kein Code-Eingriff nötig.
  (async function loadSlots(){
    const sel=$('slot'), pad=n=>String(n).padStart(2,'0'), unit=$('unit_id').value;
+   let slotsGeplant=false;   // gibt es ueberhaupt aktive Termine? (fuer die Leermeldung)
    try{
      const flt = unit ? `&or=(unit_id.eq.${encodeURIComponent(unit)},unit_id.is.null)` : '';
      const r = await fetch(`${SUPABASE_URL}/rest/v1/viewing_slots?aktiv=eq.true${flt}&order=datum,von`,
        {headers:{apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY}});
      const rows = r.ok ? await r.json() : [];
+     // Belegung je Zeitfenster. Mehrfachbelegung ist gewollt (No-Show-Quote), aber
+     // ab MAX_PARTEIEN wird das Fenster nicht mehr angeboten. Gelesen wird die
+     // Aggregat-View slot_auslastung — applicants selbst darf anon nicht lesen.
+     const MAX_PARTEIEN = 3;
+     let belegt = {};
+     try{
+       const rb = await fetch(`${SUPABASE_URL}/rest/v1/slot_auslastung?select=slot,parteien`
+           + (unit ? `&unit_id=eq.${encodeURIComponent(unit)}` : ''),
+         {headers:{apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY}});
+       if(rb.ok){ (await rb.json()).forEach(z=>{ belegt[z.slot]=z.parteien; }); }
+     }catch(e){ /* Belegung nicht lesbar -> lieber alle Fenster anbieten als keins */ }
+     slotsGeplant = rows.length > 0;
      rows.forEach(b=>{ let [h,m]=(b.von||'13:00').split(':').map(Number);
        const [eh,em]=(b.bis||'15:00').split(':').map(Number), end=eh*60+em, takt=b.takt||15;
        while(h*60+m < end){ let m2=m+takt,h2=h+Math.floor(m2/60); m2%=60;
-         const o=document.createElement('option');
-         o.textContent=`${b.datum||''} ${pad(h)}:${pad(m)}–${pad(h2)}:${pad(m2)}`.trim();
-         sel.appendChild(o); h=h2; m=m2; } });
+         const bez=`${b.datum||''} ${pad(h)}:${pad(m)}–${pad(h2)}:${pad(m2)}`.trim();
+         if((belegt[bez]||0) < MAX_PARTEIEN){
+           const o=document.createElement('option'); o.textContent=bez; sel.appendChild(o); }
+         h=h2; m=m2; } });
    }catch(e){}
-   if(sel.options.length<=1){ const o=document.createElement('option'); o.value=''; o.dataset.i18n='slots_tba'; o.textContent=t('slots_tba'); sel.appendChild(o); }
+   // Kein Fenster uebrig: unterscheiden, ob noch keine Termine feststehen oder ob
+   // alle belegt sind — sonst wartet jemand auf Termine, die es laengst gibt.
+   if(sel.options.length<=1){ const o=document.createElement('option'); o.value='';
+     const k = slotsGeplant ? 'slots_voll' : 'slots_tba';
+     o.dataset.i18n=k; o.textContent=t(k); sel.appendChild(o); }
  })();
  function uid(){ return (self.crypto&&crypto.randomUUID)?crypto.randomUUID():(Date.now()+'-'+Math.floor(Math.random()*1e9)); }
  // Live-Hinweise
