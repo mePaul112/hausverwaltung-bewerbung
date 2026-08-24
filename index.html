@@ -180,6 +180,7 @@
   // erscheinen Interessenten unangemeldet zur Sammelbesichtigung.
   ok_slot:{de:'Ihr Besichtigungstermin: {slot}',en:'Your viewing appointment: {slot}'},
   ok_addr:{de:'Adresse: Körnerstraße 35, 27576 Bremerhaven. Treffpunkt am Hauseingang – bitte klingeln.',en:'Address: Körnerstraße 35, 27576 Bremerhaven. Meeting point at the main entrance – please ring the bell.'},
+  warn_upload:{einfach:'Diese Dateien sind nicht angekommen: {files}. Bitte bringen Sie die Papiere zum Termin mit.',de:'⚠ Folgende Nachweise konnten nicht hochgeladen werden: {files}. Bitte bringen Sie sie zum Besichtigungstermin mit.',en:'⚠ The following documents could not be uploaded: {files}. Please bring them to the viewing appointment.'},
   err_send:{einfach:'Das Senden hat nicht geklappt. Bitte versuchen Sie es später noch einmal.',de:'Fehler beim Senden',en:'Error sending'},
   err_network:{einfach:'Keine Verbindung. Bitte versuchen Sie es später noch einmal.',de:'Netzwerkfehler. Bitte später erneut versuchen.',en:'Network error. Please try again later.'}
  };
@@ -279,11 +280,20 @@
      // was welches Dokument ist, und die Verwaltung sieht direkt, was noch fehlt.
      const ARTEN=['schufa','vermieter','einkommen'];
      const hat=ARTEN.filter(a=>$('nachweis_'+a).files.length);
-     if(hat.length){ const ref=uid(); o.nachweis_ref=ref;
+     // Upload-Ergebnis PRÜFEN: vorher wurde die Antwort verworfen — schlug der Upload fehl
+     // (fehlende Storage-Policy, Datei zu groß, Netz), sah die Verwaltung "kein Dokument",
+     // obwohl der Bewerber Dateien ausgewählt hatte. nachweis_ref wird nur noch gesetzt,
+     // wenn mindestens eine Datei wirklich angekommen ist; Fehlschläge werden dem Bewerber gemeldet.
+     const uploadFehler=[];
+     if(hat.length){ const ref=uid(); let okZahl=0;
        for(const art of hat){
          for(const file of $('nachweis_'+art).files){
-           await fetch(`${SUPABASE_URL}/storage/v1/object/nachweise/${ref}/${art}/${encodeURIComponent(file.name)}`,
-             {method:'POST',headers:{apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY},body:file}); } } }
+           try{
+             const up=await fetch(`${SUPABASE_URL}/storage/v1/object/nachweise/${ref}/${art}/${encodeURIComponent(file.name)}`,
+               {method:'POST',headers:{apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY},body:file});
+             if(up.ok) okZahl++; else uploadFehler.push(file.name);
+           }catch(e){ uploadFehler.push(file.name); } } }
+       if(okZahl>0) o.nachweis_ref=ref; }
      const r=await fetch(`${SUPABASE_URL}/rest/v1/applicants`,{method:'POST',
        headers:{'Content-Type':'application/json',apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY,Prefer:'return=minimal'},
        body:JSON.stringify(o)});
@@ -292,6 +302,7 @@
        const zeilen=[t('ok_sent')];
        if(o.slot) zeilen.push(t('ok_slot').replace('{slot}', o.slot));
        zeilen.push(t('ok_addr'));
+       if(uploadFehler.length) zeilen.push(t('warn_upload').replace('{files}', uploadFehler.join(', ')));
        msg.textContent=zeilen.join('\n'); }
      else { msg.className='err'; msg.textContent=t('err_send')+' ('+r.status+').'; }
    }catch(err){ msg.className='err'; msg.textContent=t('err_network'); }
