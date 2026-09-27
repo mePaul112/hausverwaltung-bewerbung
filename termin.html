@@ -64,6 +64,7 @@
   l_slot:{einfach:'Ihr neuer Wunsch-Termin *',de:'Neuer Wunschtermin (15-Min-Fenster) *',en:'New preferred time slot (15-min window) *'},
   slots_tba:{einfach:'Es gibt noch keine Termine.',de:'Termine werden noch bekanntgegeben',en:'Appointments to be announced'},
   slots_voll:{einfach:'Alle Termine sind voll. Bitte schreiben Sie uns eine E-Mail.',de:'Alle Zeitfenster sind belegt – bitte melden Sie sich kurz per E-Mail',en:'All time slots are taken – please contact us by e-mail'},
+  kein_termin:{einfach:'Es gibt gerade keinen Besichtigungstermin. Bitte nutzen Sie das große Bewerbungsformular — wir melden uns, sobald ein neuer Termin feststeht.',de:'Aktuell steht kein Besichtigungstermin fest — dieses Folgetermin-Formular entfällt daher. Bitte nutzen Sie das vollständige Bewerbungsformular; wir melden uns, sobald ein neuer Termin feststeht.',en:'There is currently no viewing appointment scheduled, so this follow-up form does not apply. Please use the full application form instead — we will contact you once a new date has been set.'},
   l_message:{einfach:'Möchten Sie uns noch etwas sagen? (freiwillig)',de:'Anmerkung (optional)',en:'Remarks (optional)'},
   ph_message:{de:'z. B. Änderungen seit Ihrer ersten Anmeldung',en:'e.g. changes since your first registration'},
   decl_consent:{einfach:'Ich habe mich schon bei Ihnen beworben. Ich melde mich jetzt für den oben gewählten Termin an. *',de:'Ich bin bereits als Interessent/in registriert und melde mich hiermit verbindlich für den oben gewählten Termin an. *',en:'I am already registered as an applicant and hereby register bindingly for the appointment selected above. *'},
@@ -113,9 +114,19 @@
            const o=document.createElement('option'); o.textContent=bez; sel.appendChild(o); }
          h=h2; m=m2; } });
    }catch(e){}
-   if(sel.options.length<=1){ const o=document.createElement('option'); o.value='';
+   const echterSlotDa = sel.options.length > 1;
+   if(!echterSlotDa){ const o=document.createElement('option'); o.value='';
      const k = slotsGeplant ? 'slots_voll' : 'slots_tba';
      o.dataset.i18n=k; o.textContent=t(k); sel.appendChild(o); }
+   // Diese Seite ist nur fuer einen AKTIVEN Termin sinnvoll (Auftrag StS 27.09.2026:
+   // Folgetermin-Formular entfaellt ohne aktiven Slot) — ohne Termin auf das volle
+   // Formular verweisen statt ein blockierendes Pflichtfeld ohne Auswahl zu zeigen.
+   if(!echterSlotDa){
+     document.getElementById('f').style.display='none';
+     const h=document.createElement('div'); h.className='box';
+     h.textContent=t('kein_termin');
+     document.getElementById('f').insertAdjacentElement('beforebegin', h);
+   }
  })();
  function normPhone(s){ let t=(s||'').replace(/[\s\/\-().]/g,''); t=t.replace(/^\+49/,'0').replace(/^0049/,'0'); return t; }
  $('phone').addEventListener('blur',()=>{ $('phone').value=normPhone($('phone').value); });

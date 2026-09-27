@@ -93,8 +93,8 @@
  <small data-i18n="hint_upload">PDF oder Foto, je Feld mehrere möglich. Was Sie jetzt nicht zur Hand haben, bringen Sie bitte zum Termin mit.</small>
 
  <h2 data-i18n="s_viewing">Besichtigung</h2>
- <label data-i18n="l_slot">Verbindliche Terminwahl (15-Min-Fenster) *</label>
- <select name="slot" id="slot" required><option value="">…</option></select>
+ <label data-i18n="l_slot" id="lSlot">Verbindliche Terminwahl (15-Min-Fenster) *</label>
+ <select name="slot" id="slot"><option value="">…</option></select>
 
  <h2 data-i18n="s_message">Ihre Nachricht (optional)</h2>
  <label data-i18n="l_message">Möchten Sie uns noch etwas mitteilen?</label>
@@ -161,6 +161,9 @@
   hint_upload:{einfach:'Sie können Fotos oder PDF-Dateien hochladen. Sie haben die Papiere gerade nicht? Dann bringen Sie die Papiere zum Termin mit.',de:'PDF oder Foto, je Feld mehrere möglich. Was Sie jetzt nicht zur Hand haben, bringen Sie bitte zum Termin mit.',en:'PDF or photo, several per field. Whatever you do not have at hand now, please bring to the viewing.'},
   s_viewing:{einfach:'Termin: Wohnung ansehen',de:'Besichtigung',en:'Viewing'},
   l_slot:{einfach:'Wann möchten Sie kommen? Bitte wählen Sie eine Uhrzeit. *',de:'Verbindliche Terminwahl (15-Min-Fenster) *',en:'Binding appointment selection (15-min slot) *'},
+  // Ohne aktiven Termin (viewing_slots leer) ist die Terminwahl kein Pflichtfeld mehr —
+  // sonst blockiert required="" jede Bewerbung, solange kein Termin ansteht (Befund 27.09.2026).
+  l_slot_opt:{einfach:'Es gibt gerade noch keinen Termin — das macht nichts, bewerben Sie sich trotzdem.',de:'Terminwahl (aktuell kein Termin — Sie können sich trotzdem bewerben)',en:'Appointment selection (no date available yet — you can still apply)'},
   slots_tba:{einfach:'Es gibt noch keine Termine.',de:'Termine werden noch bekanntgegeben',en:'Appointments to be announced'},
   slots_voll:{einfach:'Alle Termine sind voll. Bitte schreiben Sie uns eine E-Mail.',de:'Alle Zeitfenster sind belegt – bitte melden Sie sich kurz per E-Mail',en:'All time slots are taken – please contact us by e-mail'},
   s_message:{einfach:'Ihre Nachricht (freiwillig)',de:'Ihre Nachricht (optional)',en:'Your message (optional)'},
@@ -180,6 +183,9 @@
   // erscheinen Interessenten unangemeldet zur Sammelbesichtigung.
   ok_slot:{de:'Ihr Besichtigungstermin: {slot}',en:'Your viewing appointment: {slot}'},
   ok_addr:{de:'Adresse: Körnerstraße 35, 27576 Bremerhaven. Treffpunkt am Hauseingang – bitte klingeln.',en:'Address: Körnerstraße 35, 27576 Bremerhaven. Meeting point at the main entrance – please ring the bell.'},
+  // Ohne gewaehlten Termin NICHT die Adresse zeigen (sonst tauchen Interessenten
+  // unangemeldet auf) — stattdessen vertroesten, analog zur Mail-Vorlage.
+  ok_nachtermin:{einfach:'Es gibt gerade noch keinen Besichtigungstermin. Wir melden uns bei Ihnen, sobald einer feststeht.',de:'Aktuell steht noch kein Besichtigungstermin fest. Wir melden uns bei Ihnen, sobald einer feststeht.',en:'There is no viewing appointment set yet. We will contact you as soon as one has been scheduled.'},
   warn_upload:{einfach:'Diese Dateien sind nicht angekommen: {files}. Bitte bringen Sie die Papiere zum Termin mit.',de:'⚠ Folgende Nachweise konnten nicht hochgeladen werden: {files}. Bitte bringen Sie sie zum Besichtigungstermin mit.',en:'⚠ The following documents could not be uploaded: {files}. Please bring them to the viewing appointment.'},
   err_send:{einfach:'Das Senden hat nicht geklappt. Bitte versuchen Sie es später noch einmal.',de:'Fehler beim Senden',en:'Error sending'},
   err_network:{einfach:'Keine Verbindung. Bitte versuchen Sie es später noch einmal.',de:'Netzwerkfehler. Bitte später erneut versuchen.',en:'Network error. Please try again later.'}
@@ -231,9 +237,16 @@
    }catch(e){}
    // Kein Fenster uebrig: unterscheiden, ob noch keine Termine feststehen oder ob
    // alle belegt sind — sonst wartet jemand auf Termine, die es laengst gibt.
-   if(sel.options.length<=1){ const o=document.createElement('option'); o.value='';
+   const echterSlotDa = sel.options.length > 1;   // mehr als nur der Platzhalter "…"
+   if(!echterSlotDa){ const o=document.createElement('option'); o.value='';
      const k = slotsGeplant ? 'slots_voll' : 'slots_tba';
      o.dataset.i18n=k; o.textContent=t(k); sel.appendChild(o); }
+   // Terminwahl ist nur dann PFLICHT, wenn es wirklich einen wählbaren Termin gibt —
+   // sonst könnte sich niemand mehr bewerben, solange keine Besichtigung ansteht
+   // (Befund 27.09.2026: Formular war ohne aktiven Slot komplett blockiert).
+   sel.required = echterSlotDa;
+   $('lSlot').dataset.i18n = echterSlotDa ? 'l_slot' : 'l_slot_opt';
+   $('lSlot').textContent = t($('lSlot').dataset.i18n);
  })();
  function uid(){ return (self.crypto&&crypto.randomUUID)?crypto.randomUUID():(Date.now()+'-'+Math.floor(Math.random()*1e9)); }
  // Live-Hinweise
@@ -300,8 +313,8 @@
      if(r.ok){ f.reset(); $('kinderHint').textContent='';$('nettoHint').textContent=''; msg.className='ok';
        // o.slot vor dem reset() eingesammelt — Termin + Adresse gibt es nur nach dem Absenden
        const zeilen=[t('ok_sent')];
-       if(o.slot) zeilen.push(t('ok_slot').replace('{slot}', o.slot));
-       zeilen.push(t('ok_addr'));
+       if(o.slot){ zeilen.push(t('ok_slot').replace('{slot}', o.slot)); zeilen.push(t('ok_addr')); }
+       else { zeilen.push(t('ok_nachtermin')); }
        if(uploadFehler.length) zeilen.push(t('warn_upload').replace('{files}', uploadFehler.join(', ')));
        msg.textContent=zeilen.join('\n'); }
      else { msg.className='err'; msg.textContent=t('err_send')+' ('+r.status+').'; }
