@@ -1,7 +1,7 @@
 # CLAUDE.md – hausverwaltung (Mietersuche-Funnel; GitHub-Name bleibt hausverwaltung-bewerbung)
 
 Einordnung: **Hauptpfad 05 Immobilien › Toolentwicklung › Mietersuche-Funnel**
-Leitfaden: `C:\Users\steph\OneDrive - prodAIx\xx_Lebensraum\LEITFADEN-Projektstruktur.md`
+Leitfaden: `C:\Users\steph\OneDrive - prodAIx\Arbeit\07_Claude\LEITFADEN-Projektstruktur.md`
 
 ## Zweck
 - Öffentliche Bewerber-Front-Door für Mietinteressenten der Lebensraum Körnerstr. 35 GmbH
