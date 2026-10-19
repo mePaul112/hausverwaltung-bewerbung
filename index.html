@@ -183,6 +183,8 @@
   // erscheinen Interessenten unangemeldet zur Sammelbesichtigung.
   ok_slot:{de:'Ihr Besichtigungstermin: {slot}',en:'Your viewing appointment: {slot}'},
   ok_addr:{de:'Adresse: Körnerstraße 35, 27576 Bremerhaven. Treffpunkt am Hauseingang – bitte klingeln.',en:'Address: Körnerstraße 35, 27576 Bremerhaven. Meeting point at the main entrance – please ring the bell.'},
+  // Auftrag StS 19.10.2026: Hinweis nach dem Termin, nur bei gewaehltem Termin.
+  ok_unterlagen:{einfach:'Bitte bringen Sie fehlende Papiere (SCHUFA, Einkommensnachweise) zum Termin mit.',de:'Bitte bringen Sie fehlende Unterlagen (SCHUFA, Einkommensnachweise) zum Termin mit.',en:'Please bring any missing documents (SCHUFA credit report, proof of income) to the appointment.'},
   // Ohne gewaehlten Termin NICHT die Adresse zeigen (sonst tauchen Interessenten
   // unangemeldet auf) — stattdessen vertroesten, analog zur Mail-Vorlage.
   ok_nachtermin:{einfach:'Der Besichtigungstermin hat stattgefunden. Danke für Ihre Eintragung! Wir melden uns bei Ihnen, sobald ein neuer Termin feststeht.',de:'Der Besichtigungstermin hat bereits stattgefunden. Vielen Dank für Ihre Eintragung! Wir melden uns bei Ihnen, sobald ein neuer Termin feststeht.',en:'The viewing has already taken place. Thank you for registering! We will contact you as soon as a new date has been set.'},
@@ -313,7 +315,7 @@
      if(r.ok){ f.reset(); $('kinderHint').textContent='';$('nettoHint').textContent=''; msg.className='ok';
        // o.slot vor dem reset() eingesammelt — Termin + Adresse gibt es nur nach dem Absenden
        const zeilen=[t('ok_sent')];
-       if(o.slot){ zeilen.push(t('ok_slot').replace('{slot}', o.slot)); zeilen.push(t('ok_addr')); }
+       if(o.slot){ zeilen.push(t('ok_slot').replace('{slot}', o.slot)); zeilen.push(t('ok_addr')); zeilen.push(t('ok_unterlagen')); }
        else { zeilen.push(t('ok_nachtermin')); }
        if(uploadFehler.length) zeilen.push(t('warn_upload').replace('{files}', uploadFehler.join(', ')));
        msg.textContent=zeilen.join('\n'); }
