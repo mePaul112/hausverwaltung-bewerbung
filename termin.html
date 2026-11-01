@@ -51,7 +51,14 @@
  const $=id=>document.getElementById(id);
  $('unit_id').value = new URLSearchParams(location.search).get('unit') || '';
 
+ /* Zugang steuern: Nur Wohnungen in dieser Liste nehmen Anmeldungen an.
+    Leere Liste = Formular geschlossen. Neue Suche: Unit eintragen, z. B. ['BHV-KS35-04'], und in beide Kopien pushen. */
+ const OFFENE_UNITS = [];
+ const FORMULAR_OFFEN = $('unit_id').value ? OFFENE_UNITS.includes($('unit_id').value) : OFFENE_UNITS.length>0;
+
  const I18N={
+  zu_h1:{einfach:'Zur Zeit ist keine Wohnung frei',de:'Zurzeit ist keine Wohnung frei',en:'No apartment available at the moment'},
+  zu_text:{einfach:'Die Anmeldung ist gerade geschlossen. Die Wohnung ist vermietet. Vielen Dank für Ihr Interesse.',de:'Das Anmeldeformular ist derzeit geschlossen, weil die Wohnung vermietet ist. Vielen Dank für Ihr Interesse.',en:'The application form is currently closed because the apartment has been let. Thank you for your interest.'},
   title:{einfach:'Neuer Termin – Sie sind schon angemeldet',de:'Neuer Besichtigungstermin – bereits registriert',en:'New viewing appointment – already registered'},
   h1:{einfach:'Neuer Termin für Sie — Sie haben sich schon beworben',de:'Neuer Besichtigungstermin – Sie sind bereits registriert',en:'New viewing appointment – you are already registered'},
   intro:{einfach:'Haben Sie sich schon bei uns beworben? Dann füllen Sie das große Formular nicht noch einmal aus. Wählen Sie hier nur Ihren neuen Termin. Ihre alten Angaben bleiben gespeichert.',de:'Sie haben sich bereits bei uns beworben bzw. gemeldet? Dann müssen Sie die Bewerbung <b>nicht</b> erneut ausfüllen — wählen Sie hier nur Ihren neuen Wunschtermin. Ihre bereits gespeicherten Angaben bleiben erhalten.',en:'Have you already applied or contacted us? Then you do <b>not</b> need to fill in the full application again — just pick your new preferred time here. Your previously saved details remain unchanged.'},
@@ -90,6 +97,7 @@
  document.querySelectorAll('.lang button').forEach(b=>b.addEventListener('click',()=>applyLang(b.dataset.l)));
 
  (async function loadSlots(){
+   if(!FORMULAR_OFFEN) return;
    const sel=$('slot'), pad=n=>String(n).padStart(2,'0'), unit=$('unit_id').value;
    let slotsGeplant=false;
    try{
@@ -159,6 +167,13 @@
    }catch(err){ msg.className='err'; msg.textContent=t('err_network'); }
  });
 
+ if(!FORMULAR_OFFEN){
+   document.querySelector('h1').dataset.i18n='zu_h1';
+   const h=document.querySelector('h1'); let el=h.nextElementSibling;
+   while(el && el.tagName!=='SCRIPT'){ el.hidden=true; el.style.display='none'; el=el.nextElementSibling; }
+   const p=document.createElement('p'); p.dataset.i18n='zu_text'; h.after(p);
+   document.getElementById('f').querySelectorAll('input,select,textarea,button').forEach(e=>e.disabled=true);
+ }
  applyLang(lang);
 </script>
 </body>

@@ -18,6 +18,11 @@ Leitfaden: `C:\Users\steph\OneDrive - prodAIx\Arbeit\07_Claude\LEITFADEN-Projekt
 - `aussen.jpg` – Banner. Kein Build-Step, reines statisches HTML/JS.
 - Lokale Vorschau: `.claude/launch.json` → `python -m http.server 8532`.
 
+## Zugang öffnen und schließen
+- In `index.html` und `termin.html` steht oben im Skript `const OFFENE_UNITS = [];`. Leere Liste = Formular geschlossen (Hinweis statt Formular, Code und Texte bleiben).
+- Neue Suche: Unit eintragen, z. B. `['BHV-KS35-04']`, in beiden Dateien und beiden Repo-Kopien, dann pushen.
+- Die Sperre wirkt im Browser. Die Supabase-Tabelle `applicants` bleibt technisch beschreibbar.
+
 ## Backend (Supabase, Projekt `vermietung-ks35`, `qdkfzzfnntfyvutztckl.supabase.co`)
 - Tabelle `applicants` (anon schreibt, darf aber nicht lesen), Tabelle `viewing_slots` (aktive Termine, Pflege im
   Table Editor), View `slot_auslastung` (Belegung je Fenster, max. 3 Parteien).
